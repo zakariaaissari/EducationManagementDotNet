@@ -6,6 +6,8 @@
         IBaseRepository<Product,long> productRepository { get; }
         IBaseRepository<Semestre, long> semestreRepository { get; }
         IBaseRepository<Module, long> moduleRepository { get; }
+        IBaseRepository<Filiere, long> filiereRepository { get; }
+        IBaseRepository<Chapitre, long> chapitreRepository { get; }
         int complete();
     }
 }

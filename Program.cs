@@ -1,4 +1,5 @@
 using isgasoir;
+using isgasoir.Services.ServiceApi;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -15,6 +16,8 @@ builder.Services.AddTransient(typeof(IBaseRepository<,>), typeof(BaseRepository<
 
 builder.Services.AddTransient(typeof(IUnitOfWork), typeof(UnitOfWork));
 
+builder.Services.AddHttpClient<LLMApi>();
+builder.Services.AddSingleton<LLMApi>();
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

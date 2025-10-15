@@ -9,7 +9,8 @@
         public IBaseRepository<Product, long> productRepository { get; private set; }
         public IBaseRepository<Module, long> moduleRepository { get; private set; }
         public IBaseRepository<Semestre, long> semestreRepository { get; private set; }
-
+        public IBaseRepository<Filiere, long> filiereRepository { get; private set; }
+        public IBaseRepository<Chapitre, long> chapitreRepository { get; private set; }
 
         public UnitOfWork(ApplicationContext context)
         {
@@ -19,7 +20,10 @@
             productRepository = new BaseRepository<Product,long>(context);
             moduleRepository = new BaseRepository<Module, long>(context);
             semestreRepository = new BaseRepository<Semestre, long>(context);
-            
+            filiereRepository = new BaseRepository<Filiere, long>(context);
+            chapitreRepository = new BaseRepository<Chapitre, long>(context);
+
+
 
 
         }

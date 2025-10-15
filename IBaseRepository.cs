@@ -1,4 +1,5 @@
-﻿using System.Linq.Expressions;
+﻿using Microsoft.AspNetCore.Mvc;
+using System.Linq.Expressions;
 
 namespace isgasoir
 {
@@ -10,7 +11,8 @@ namespace isgasoir
         public T? findById(K key);
         public IEnumerable<T> findByCretiria(Expression<Func<T,bool>> critiria);
         public List<T> findAll();
-        
+      
+
         IQueryable<T> Query {  get; }
 
     }

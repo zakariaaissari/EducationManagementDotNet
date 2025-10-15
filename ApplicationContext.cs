@@ -32,5 +32,8 @@ namespace isgasoir
         DbSet<Studant> studants { get; set; }
         DbSet<Semestre> semestrees { get; set;}
         DbSet<Module> modules { get; set; }
+        DbSet<Filiere> filieres { get; set; }
+        DbSet<Chapitre> chapitres { get; set; }
+
     }
 }
