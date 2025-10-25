@@ -5,32 +5,53 @@
 **EducationManagementDotNet** est une application web complète développée avec ASP.NET Core et Entity Framework Core pour la gestion d'un système éducatif. Cette application permet de gérer les étudiants, les modules, les semestres, les chapitres et les activités d'apprentissage.
 
 ## 🚀 Fonctionnalités Principales
+<img width="1497" height="754" alt="Screenshot 2025-10-25 at 13 35 59" src="https://github.com/user-attachments/assets/7b968e3c-c3b7-49ec-9f9d-c07fb74d4f05" />
+
 
 ### 👥 Gestion des Étudiants
 - **Ajout, modification et suppression** des étudiants
 - **Informations personnelles** : nom, prénom, date de naissance, genre
 - **Association** avec les filières et modules
+<img width="1512" height="757" alt="Screenshot 2025-10-25 at 13 50 09" src="https://github.com/user-attachments/assets/ea22b643-2be1-44ca-ba53-389af4f4a119" />
+
+<img width="1512" height="757" alt="Screenshot 2025-10-25 at 13 51 02" src="https://github.com/user-attachments/assets/7ff4bdb5-a744-44ad-8f87-af9cf0461b25" />
+
 
 ### 📚 Gestion des Modules
 - **Création et gestion** des modules d'enseignement
 - **Association** avec les semestres
 - **Coefficient** et nom des modules
 
+<img width="1512" height="757" alt="Screenshot 2025-10-25 at 13 52 47" src="https://github.com/user-attachments/assets/31fbc2b5-f5e4-4bce-8112-547462f98aaa" />
+
+
 ### 🎯 Gestion des Semestres
 - **Organisation** des semestres académiques
 - **Association** avec les filières
 - **Modules** rattachés à chaque semestre
+
+<img width="1512" height="757" alt="Screenshot 2025-10-25 at 13 54 45" src="https://github.com/user-attachments/assets/09eb424e-dd38-4b7c-97b8-43cd1d9f0506" />
+
 
 ### 📖 Gestion des Chapitres
 - **Contenu détaillé** des chapitres
 - **Durée** et titre des chapitres
 - **Association** avec les modules
 
+<img width="1503" height="777" alt="Screenshot 2025-10-25 at 13 56 49" src="https://github.com/user-attachments/assets/6a167626-c009-4588-8938-cfd437ef9532" />
+
+<img width="1503" height="777" alt="Screenshot 2025-10-25 at 13 57 31" src="https://github.com/user-attachments/assets/52255afb-e926-4245-aa64-b0ebea2919da" />
+
+
+
 ### 🎪 Gestion des Activités
 - **Création d'activités** d'apprentissage
 - **Types d'activités** variés
 - **Instructions** et durée des activités
 - **Dates d'échéance**
+
+<img width="1503" height="777" alt="Screenshot 2025-10-25 at 13 58 25" src="https://github.com/user-attachments/assets/6592b149-5354-4654-83d4-5b0dc77c774e" />
+
 
 ## 🛠️ Technologies Utilisées
 
