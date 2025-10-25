@@ -171,13 +171,17 @@ La page d'accueil présente un tableau de bord avec :
 - `POST /api/chapitre` - Créer un chapitre
 - `PUT /api/chapitre/{id}` - Modifier un chapitre
 - `DELETE /api/chapitre/{id}` - Supprimer un chapitre
+- `Generate /api/Chapitres/Generate` - Generate un chapitre
 
 ### Activités
 - `GET /api/activity` - Liste des activités
 - `POST /api/activity` - Créer une activité
 - `PUT /api/activity/{id}` - Modifier une activité
 - `DELETE /api/activity/{id}` - Supprimer une activité
+- `Generate /api/Activities/Generate` - Generate une activité
 
+### LLM 
+- `POST api/LLM/Generate` - Generate
 ## 🎨 Captures d'Écran
 
 ### 🏠 Tableau de Bord Principal
