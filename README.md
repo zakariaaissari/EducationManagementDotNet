@@ -137,7 +137,7 @@ La page d'accueil présente un tableau de bord avec :
 ```json
 {
   "ConnectionStrings": {
-    "mycon": "Data Source=.;Initial Catalog=isgasoir;User ID=sa;Password=Dev@1563;Connect Timeout=30;Encrypt=False;Trust Server Certificate=False;Application Intent=ReadWrite;Multi Subnet Failover=False"
+    "mycon": "Data Source=.;Initial Catalog=isgasoir;User ID=;Password=;Connect Timeout=30;Encrypt=False;Trust Server Certificate=False;Application Intent=ReadWrite;Multi Subnet Failover=False"
   }
 }
 ```
