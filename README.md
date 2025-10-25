@@ -41,54 +41,6 @@
 - **Bootstrap 5** - Framework CSS
 - **C#** - Langage de programmation
 
-## 🗄️ Structure de la Base de Données
-
-### Tables Principales
-
-#### 📊 Table `Studants` (Étudiants)
-```sql
-- Id (Primary Key)
-- Nom (Nom de famille)
-- Prenom (Prénom)
-- Date (Date de naissance)
-- Gender (Genre)
-```
-
-#### 📚 Table `Modules` (Modules)
-```sql
-- Id (Primary Key)
-- Name (Nom du module)
-- Coiff (Coefficient)
-- SemId (ID du semestre)
-```
-
-#### 🎯 Table `Semestrees` (Semestres)
-```sql
-- Id (Primary Key)
-- Name (Nom du semestre)
-- FiliereId (ID de la filière)
-```
-
-#### 📖 Table `Chapitres` (Chapitres)
-```sql
-- Id (Primary Key)
-- Title (Titre)
-- Content (Contenu)
-- Duree (Durée)
-- ModuleId (ID du module)
-```
-
-#### 🎪 Table `Activities` (Activités)
-```sql
-- Id (Primary Key)
-- Title (Titre)
-- Description (Description)
-- Type (Type d'activité)
-- Instructions (Instructions)
-- Duration (Durée)
-- DueDate (Date d'échéance)
-- ChapitreId (ID du chapitre)
-```
 
 ## 🚀 Installation et Configuration
 
@@ -150,11 +102,13 @@ La page d'accueil présente un tableau de bord avec :
 - **Contenu riche** des chapitres
 - **Durée** et progression
 - **Association** avec les modules
+- **Générer Content avec AI Gemini
 
 ### 🎪 Gestion des Activités
 - **Création** d'activités variées
 - **Instructions** détaillées
 - **Suivi** des échéances
+- **Générer instructions avec AI Gemini
 
 ## 🔧 Configuration
 
@@ -236,55 +190,7 @@ La page d'accueil présente un tableau de bord avec :
 - **Gestion** des erreurs sécurisée
 - **Configuration** des CORS
 
-## 🚀 Déploiement
-
-### Déploiement Local
-```bash
-dotnet publish -c Release
-dotnet run --urls "http://localhost:5000"
-```
-
-### Déploiement Azure
-1. Créer une App Service Azure
-2. Configurer la chaîne de connexion
-3. Déployer via Visual Studio ou Azure CLI
-
-### Déploiement Docker
-```dockerfile
-FROM mcr.microsoft.com/dotnet/aspnet:7.0
-COPY . /app
-WORKDIR /app
-EXPOSE 80
-ENTRYPOINT ["dotnet", "isgasoir.dll"]
-```
-
-## 🤝 Contribution
-
-1. **Fork** le projet
-2. Créer une **branche** pour votre fonctionnalité
-3. **Commit** vos changements
-4. **Push** vers la branche
-5. Ouvrir une **Pull Request**
-
-## 📝 Licence
-
-Ce projet est sous licence MIT. Voir le fichier `LICENSE` pour plus de détails.
-
-## 👨‍💻 Auteur
-
-**Zakaria Aissari**
-- GitHub: [@zakariaaissari](https://github.com/zakariaaissari)
-- Email: zakariaaissari@example.com
-
-## 📞 Support
-
-Pour toute question ou problème :
-- Ouvrir une **issue** sur GitHub
-- Contacter l'auteur par email
-- Consulter la **documentation** technique
-
-## 🔄 Changelog
-
+-
 ### Version 1.0.0
 - ✅ Gestion complète des étudiants
 - ✅ Gestion des modules et semestres
