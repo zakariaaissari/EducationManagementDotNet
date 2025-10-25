@@ -54,7 +54,6 @@ namespace isgasoir.Controllers
 
 
         // POST: api/semestres
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
         public ActionResult<Semestre> Postsemestre(Semestre @semestre)
         {
@@ -68,9 +67,57 @@ namespace isgasoir.Controllers
             return CreatedAtAction("Getsemestre", new { id = @semestre.Id }, @semestre);
         }
 
-        /* private bool semestreExists(long id)
-         {
-             return (_context.semestres?.Any(e => e.Id == id)).GetValueOrDefault();
-         }*/
+        // PUT: api/semestres/5
+        [HttpPut("{id}")]
+        public ActionResult<Semestre> PutSemestre(long id, Semestre semestre)
+        {
+            if (id != semestre.Id)
+            {
+                return BadRequest();
+            }
+
+            try
+            {
+                _unitOfWork.semestreRepository.update(semestre);
+                _unitOfWork.complete();
+                return Ok(semestre);
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!SemestreExists(id))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+        }
+
+        // DELETE: api/semestres/5
+        [HttpDelete("{id}")]
+        public IActionResult DeleteSemestre(long id)
+        {
+            if (_unitOfWork.semestreRepository == null)
+            {
+                return NotFound();
+            }
+            var semestre = _unitOfWork.semestreRepository.findById(id);
+            if (semestre == null)
+            {
+                return NotFound();
+            }
+
+            _unitOfWork.semestreRepository.remove(semestre);
+            _unitOfWork.complete();
+
+            return NoContent();
+        }
+
+        private bool SemestreExists(long id)
+        {
+            return (_unitOfWork.semestreRepository.Query?.Any(e => e.Id == id)).GetValueOrDefault();
+        }
     }
 }

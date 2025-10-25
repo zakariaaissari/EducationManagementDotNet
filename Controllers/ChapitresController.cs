@@ -34,9 +34,8 @@ namespace isgasoir.Controllers
             {
                 return NotFound();
             }
-            // Utilisation de la méthode findAll() qui retourne une List<Chapitre>
-            // Pour respecter la signature async, on peut utiliser Task.FromResult
-            return await Task.FromResult(_unitOfWork.chapitreRepository.findAll());
+            // Include Module navigation property to get module information
+            return await Task.FromResult(_unitOfWork.chapitreRepository.Query.Include(c => c.Module).ToList());
         }
 
         // GET: api/Chapitres/5

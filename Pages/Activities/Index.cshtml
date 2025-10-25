@@ -1,0 +1,841 @@
+@page
+@model isgasoir.Pages.Activities.IndexModel
+@{
+    ViewData["Title"] = "Activities Management";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2><i class="fas fa-tasks me-2"></i>Activities Management</h2>
+    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addActivityModal">
+        <i class="fas fa-plus me-1"></i>Add New Activity
+    </button>
+</div>
+
+<!-- Filter Section -->
+<div class="card mb-4">
+    <div class="card-header">
+        <h6 class="mb-0">Filters</h6>
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-md-4">
+                <label for="filterType" class="form-label">Activity Type</label>
+                <select class="form-select" id="filterType" onchange="filterActivities()">
+                    <option value="">All Types</option>
+                    <option value="TP">TP (Travaux Pratiques)</option>
+                    <option value="TD">TD (Travaux Dirigés)</option>
+                </select>
+            </div>
+            <div class="col-md-4">
+                <label for="filterChapter" class="form-label">Chapter</label>
+                <select class="form-select" id="filterChapter" onchange="filterActivities()">
+                    <option value="">All Chapters</option>
+                </select>
+            </div>
+            <div class="col-md-4">
+                <button class="btn btn-outline-secondary mt-4" onclick="clearFilters()">
+                    <i class="fas fa-times me-1"></i>Clear Filters
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-header">
+        <h5 class="mb-0">Activities List</h5>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-striped table-hover" id="activitiesTable">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Title</th>
+                        <th>Type</th>
+                        <th>Chapter</th>
+                        <th>Duration</th>
+                        <th>Due Date</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Activities will be loaded here via JavaScript -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Add Activity Modal -->
+<div class="modal fade" id="addActivityModal" tabindex="-1" aria-labelledby="addActivityModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addActivityModalLabel">Add New Activity</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="addActivityForm">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="activityTitle" class="form-label">Title</label>
+                                <input type="text" class="form-control" id="activityTitle" required>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="activityType" class="form-label">Type</label>
+                                <select class="form-select" id="activityType" required>
+                                    <option value="">Select Type</option>
+                                    <option value="TP">TP (Travaux Pratiques)</option>
+                                    <option value="TD">TD (Travaux Dirigés)</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="activityDescription" class="form-label">Description</label>
+                        <textarea class="form-control" id="activityDescription" rows="3"></textarea>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="activityDuration" class="form-label">Duration (minutes)</label>
+                                <input type="number" class="form-control" id="activityDuration" min="1" required>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="activityDueDate" class="form-label">Due Date</label>
+                                <input type="datetime-local" class="form-control" id="activityDueDate">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="activityInstructions" class="form-label">Instructions</label>
+                        <div class="d-flex gap-2 mb-2">
+                            <button type="button" class="btn btn-outline-primary btn-sm" onclick="generateActivityContent()" id="generateActivityContentBtn">
+                                <i class="fas fa-magic me-1"></i>Generate Content with AI
+                            </button>
+                            <button type="button" class="btn btn-outline-secondary btn-sm" onclick="clearActivityContent()" id="clearActivityContentBtn">
+                                <i class="fas fa-eraser me-1"></i>Clear
+                            </button>
+                        </div>
+                        <textarea class="form-control" id="activityInstructions" rows="4" placeholder="Enter activity instructions or generate them with AI..."></textarea>
+                        <div class="form-text">You can write your own instructions or use AI to generate them based on the activity details.</div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="activityChapter" class="form-label">Chapter</label>
+                        <select class="form-select" id="activityChapter" required>
+                            <option value="">Select Chapter</option>
+                        </select>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-success" onclick="confirmAndSaveActivity()" id="confirmSaveActivityBtn" style="display: none;">
+                    <i class="fas fa-check me-1"></i>Confirm & Save Activity
+                </button>
+                <button type="button" class="btn btn-primary" onclick="addActivity()" id="saveActivityBtn">
+                    <i class="fas fa-save me-1"></i>Save Activity
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Edit Activity Modal -->
+<div class="modal fade" id="editActivityModal" tabindex="-1" aria-labelledby="editActivityModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editActivityModalLabel">Edit Activity</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="editActivityForm">
+                    <input type="hidden" id="editActivityId">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="editActivityTitle" class="form-label">Title</label>
+                                <input type="text" class="form-control" id="editActivityTitle" required>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="editActivityType" class="form-label">Type</label>
+                                <select class="form-select" id="editActivityType" required>
+                                    <option value="">Select Type</option>
+                                    <option value="TP">TP (Travaux Pratiques)</option>
+                                    <option value="TD">TD (Travaux Dirigés)</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="editActivityDescription" class="form-label">Description</label>
+                        <textarea class="form-control" id="editActivityDescription" rows="3"></textarea>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="editActivityDuration" class="form-label">Duration (minutes)</label>
+                                <input type="number" class="form-control" id="editActivityDuration" min="1" required>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="editActivityDueDate" class="form-label">Due Date</label>
+                                <input type="datetime-local" class="form-control" id="editActivityDueDate">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="editActivityInstructions" class="form-label">Instructions</label>
+                        <textarea class="form-control" id="editActivityInstructions" rows="3"></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label for="editActivityChapter" class="form-label">Chapter</label>
+                        <select class="form-select" id="editActivityChapter" required>
+                            <option value="">Select Chapter</option>
+                        </select>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary" onclick="updateActivity()">
+                    <i class="fas fa-save me-1"></i>Update Activity
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- View Activity Content Modal -->
+<div class="modal fade" id="viewActivityModal" tabindex="-1" aria-labelledby="viewActivityModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title" id="viewActivityModalLabel">
+                    <i class="fas fa-tasks me-2"></i>Activity Content
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <h4 id="activityTitleDisplay" class="text-primary"></h4>
+                        <p class="text-muted mb-0">
+                            <i class="fas fa-clock me-1"></i>Duration: <span id="activityDurationDisplay"></span> minutes
+                        </p>
+                        <p class="text-muted mb-0">
+                            <i class="fas fa-tag me-1"></i>Type: <span id="activityTypeDisplay" class="badge"></span>
+                        </p>
+                    </div>
+                    <div class="col-md-6 text-end">
+                        <button class="btn btn-success me-2" onclick="downloadActivityAsPDF()" id="downloadActivityPdfBtn">
+                            <i class="fas fa-download me-1"></i>Download PDF
+                        </button>
+                        <button class="btn btn-outline-primary" onclick="printActivityContent()">
+                            <i class="fas fa-print me-1"></i>Print
+                        </button>
+                    </div>
+                </div>
+                <hr>
+                <div id="activityContentDisplay" class="activity-content">
+                    <!-- Activity content will be displayed here -->
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .activity-content {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        line-height: 1.6;
+        color: #333;
+    }
+    
+    .activity-content h1, .activity-content h2, .activity-content h3 {
+        color: #2c3e50;
+        margin-top: 1.5rem;
+        margin-bottom: 1rem;
+    }
+    
+    .activity-content h1 {
+        font-size: 2rem;
+        border-bottom: 3px solid #e74c3c;
+        padding-bottom: 0.5rem;
+    }
+    
+    .activity-content h2 {
+        font-size: 1.5rem;
+        color: #34495e;
+    }
+    
+    .activity-content h3 {
+        font-size: 1.25rem;
+        color: #7f8c8d;
+    }
+    
+    .activity-content p {
+        margin-bottom: 1rem;
+        text-align: justify;
+    }
+    
+    .activity-content ul, .activity-content ol {
+        margin-bottom: 1rem;
+        padding-left: 2rem;
+    }
+    
+    .activity-content li {
+        margin-bottom: 0.5rem;
+    }
+    
+    .activity-content blockquote {
+        border-left: 4px solid #e74c3c;
+        padding-left: 1rem;
+        margin: 1rem 0;
+        font-style: italic;
+        color: #7f8c8d;
+    }
+    
+    .activity-content code {
+        background-color: #f8f9fa;
+        padding: 0.2rem 0.4rem;
+        border-radius: 3px;
+        font-family: 'Courier New', monospace;
+    }
+    
+    .activity-content pre {
+        background-color: #f8f9fa;
+        padding: 1rem;
+        border-radius: 5px;
+        overflow-x: auto;
+        margin: 1rem 0;
+    }
+    
+    .activity-content strong {
+        color: #2c3e50;
+        font-weight: 600;
+    }
+    
+    .activity-content em {
+        color: #7f8c8d;
+    }
+    
+    .badge-tp {
+        background-color: #e74c3c !important;
+        color: white;
+    }
+    
+    .badge-td {
+        background-color: #3498db !important;
+        color: white;
+    }
+    
+    /* Print styles */
+    @@media print {
+        .activity-content {
+            font-size: 12pt;
+            line-height: 1.4;
+        }
+        
+        .activity-content h1 {
+            font-size: 18pt;
+            page-break-after: avoid;
+        }
+        
+        .activity-content h2 {
+            font-size: 16pt;
+            page-break-after: avoid;
+        }
+        
+        .activity-content h3 {
+            font-size: 14pt;
+            page-break-after: avoid;
+        }
+        
+        .activity-content p {
+            orphans: 3;
+            widows: 3;
+        }
+    }
+</style>
+
+@section Scripts {
+    <script>
+        let allActivities = [];
+        let allChapters = [];
+
+        // Helper functions
+        function showAlert(message, type = 'info') {
+            const alertDiv = document.createElement('div');
+            alertDiv.className = `alert alert-${type} alert-dismissible fade show`;
+            alertDiv.innerHTML = `
+                ${message}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            `;
+            document.body.insertBefore(alertDiv, document.body.firstChild);
+            setTimeout(() => alertDiv.remove(), 5000);
+        }
+
+        function confirmDelete(message) {
+            return confirm(message);
+        }
+
+        async function apiCall(url, options = {}) {
+            const defaultOptions = {
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            };
+            const response = await fetch(url, { ...defaultOptions, ...options });
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            return await response.json();
+        }
+
+        function formatDuration(minutes) {
+            if (minutes < 60) {
+                return `${minutes} min`;
+            } else {
+                const hours = Math.floor(minutes / 60);
+                const remainingMinutes = minutes % 60;
+                return remainingMinutes > 0 ? `${hours}h ${remainingMinutes}min` : `${hours}h`;
+            }
+        }
+
+        function formatDate(dateString) {
+            if (!dateString) return 'N/A';
+            const date = new Date(dateString);
+            return date.toLocaleDateString() + ' ' + date.toLocaleTimeString();
+        }
+
+        // Load data on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            loadChapters();
+            loadActivities();
+        });
+
+        async function loadChapters() {
+            try {
+                allChapters = await apiCall('/api/Chapitres');
+                const chapterSelects = document.querySelectorAll('#activityChapter, #editActivityChapter, #filterChapter');
+                
+                chapterSelects.forEach(select => {
+                    select.innerHTML = '<option value="">All Chapters</option>';
+                    allChapters.forEach(chapter => {
+                        const option = document.createElement('option');
+                        option.value = chapter.id;
+                        option.textContent = chapter.title;
+                        select.appendChild(option);
+                    });
+                });
+            } catch (error) {
+                showAlert('Failed to load chapters', 'danger');
+            }
+        }
+
+        async function loadActivities() {
+            try {
+                allActivities = await apiCall('/api/Activities');
+                filterActivities();
+            } catch (error) {
+                showAlert('Failed to load activities', 'danger');
+            }
+        }
+
+        function filterActivities() {
+            const typeFilter = document.getElementById('filterType').value;
+            const chapterFilter = document.getElementById('filterChapter').value;
+            
+            let filteredActivities = allActivities;
+            
+            if (typeFilter) {
+                filteredActivities = filteredActivities.filter(activity => activity.type === typeFilter);
+            }
+            
+            if (chapterFilter) {
+                filteredActivities = filteredActivities.filter(activity => activity.chapitreId == chapterFilter);
+            }
+            
+            displayActivities(filteredActivities);
+        }
+
+        function displayActivities(activities) {
+            const tbody = document.querySelector('#activitiesTable tbody');
+            tbody.innerHTML = '';
+
+            activities.forEach(activity => {
+                const chapter = allChapters.find(c => c.id === activity.chapitreId);
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${activity.id}</td>
+                    <td>${activity.title}</td>
+                    <td><span class="badge ${activity.type === 'TP' ? 'badge-tp' : 'badge-td'}">${activity.type}</span></td>
+                    <td>${chapter ? chapter.title : 'N/A'}</td>
+                    <td>${formatDuration(activity.duration)}</td>
+                    <td>${activity.dueDate ? formatDate(activity.dueDate) : 'N/A'}</td>
+                    <td>
+                        <button class="btn btn-sm btn-outline-info me-1" onclick="viewActivityContent(${activity.id})" title="View Content">
+                            <i class="fas fa-book-open"></i>
+                        </button>
+                        <button class="btn btn-sm btn-outline-primary me-1" onclick="editActivity(${activity.id})" title="Edit">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button class="btn btn-sm btn-outline-danger" onclick="deleteActivity(${activity.id})" title="Delete">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        function clearFilters() {
+            document.getElementById('filterType').value = '';
+            document.getElementById('filterChapter').value = '';
+            filterActivities();
+        }
+
+        async function addActivity() {
+            const formData = {
+                title: document.getElementById('activityTitle').value,
+                description: document.getElementById('activityDescription').value,
+                type: document.getElementById('activityType').value,
+                duration: parseInt(document.getElementById('activityDuration').value),
+                instructions: document.getElementById('activityInstructions').value,
+                dueDate: document.getElementById('activityDueDate').value ? new Date(document.getElementById('activityDueDate').value).toISOString() : null
+            };
+
+            const chapterId = document.getElementById('activityChapter').value;
+
+            try {
+                await apiCall(`/api/Activities/${chapterId}`, {
+                    method: 'POST',
+                    body: JSON.stringify(formData)
+                });
+                
+                showAlert('Activity added successfully', 'success');
+                bootstrap.Modal.getInstance(document.getElementById('addActivityModal')).hide();
+                document.getElementById('addActivityForm').reset();
+                loadActivities();
+            } catch (error) {
+                showAlert('Failed to add activity', 'danger');
+            }
+        }
+
+        async function editActivity(id) {
+            try {
+                const activity = await apiCall(`/api/Activities/${id}`);
+                document.getElementById('editActivityId').value = activity.id;
+                document.getElementById('editActivityTitle').value = activity.title;
+                document.getElementById('editActivityDescription').value = activity.description;
+                document.getElementById('editActivityType').value = activity.type;
+                document.getElementById('editActivityDuration').value = activity.duration;
+                document.getElementById('editActivityInstructions').value = activity.instructions;
+                document.getElementById('editActivityChapter').value = activity.chapitreId;
+                
+                if (activity.dueDate) {
+                    const date = new Date(activity.dueDate);
+                    document.getElementById('editActivityDueDate').value = date.toISOString().slice(0, 16);
+                }
+                
+                new bootstrap.Modal(document.getElementById('editActivityModal')).show();
+            } catch (error) {
+                showAlert('Failed to load activity data', 'danger');
+            }
+        }
+
+        async function updateActivity() {
+            const id = document.getElementById('editActivityId').value;
+            const formData = {
+                id: parseInt(id),
+                title: document.getElementById('editActivityTitle').value,
+                description: document.getElementById('editActivityDescription').value,
+                type: document.getElementById('editActivityType').value,
+                duration: parseInt(document.getElementById('editActivityDuration').value),
+                instructions: document.getElementById('editActivityInstructions').value,
+                dueDate: document.getElementById('editActivityDueDate').value ? new Date(document.getElementById('editActivityDueDate').value).toISOString() : null
+            };
+
+            try {
+                await apiCall(`/api/Activities/${id}`, {
+                    method: 'PUT',
+                    body: JSON.stringify(formData)
+                });
+                
+                showAlert('Activity updated successfully', 'success');
+                bootstrap.Modal.getInstance(document.getElementById('editActivityModal')).hide();
+                loadActivities();
+            } catch (error) {
+                showAlert('Failed to update activity', 'danger');
+            }
+        }
+
+        async function deleteActivity(id) {
+            if (confirmDelete('Are you sure you want to delete this activity?')) {
+                try {
+                    await apiCall(`/api/Activities/${id}`, {
+                        method: 'DELETE'
+                    });
+                    
+                    showAlert('Activity deleted successfully', 'success');
+                    loadActivities();
+                } catch (error) {
+                    showAlert('Failed to delete activity', 'danger');
+                }
+            }
+        }
+
+        // LLM Content Generation Functions
+        async function generateActivityContent() {
+            const title = document.getElementById('activityTitle').value;
+            const type = document.getElementById('activityType').value;
+            const duration = document.getElementById('activityDuration').value;
+            const generateBtn = document.getElementById('generateActivityContentBtn');
+            const contentTextarea = document.getElementById('activityInstructions');
+            
+            if (!title.trim()) {
+                showAlert('Please enter an activity title first', 'warning');
+                return;
+            }
+
+            if (!type) {
+                showAlert('Please select an activity type first', 'warning');
+                return;
+            }
+
+            // Show loading state
+            const originalText = generateBtn.innerHTML;
+            generateBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i>Generating...';
+            generateBtn.disabled = true;
+
+            try {
+                // Create a prompt for the LLM
+                const prompt = `Generate comprehensive instructions for a ${type} (${type === 'TP' ? 'Travaux Pratiques' : 'Travaux Dirigés'}) activity titled "${title}". 
+                The activity should be:
+                - Duration: ${duration} minutes
+                - Type: ${type}
+                - Educational and practical
+                - Well-structured with clear objectives
+                - Include step-by-step instructions
+                - Include expected outcomes
+                - Include materials needed (if applicable)
+                - Include evaluation criteria
+                
+                Format the instructions with clear headings, objectives, materials, procedure, and evaluation sections.`;
+
+                // Call the LLM API
+                const response = await apiCall('/api/LLM/generate', {
+                    method: 'POST',
+                    body: JSON.stringify({ prompt: prompt })
+                });
+
+                // Set the generated content
+                contentTextarea.value = response.generatedText || response;
+                
+                // Show confirmation buttons
+                document.getElementById('saveActivityBtn').style.display = 'none';
+                document.getElementById('confirmSaveActivityBtn').style.display = 'inline-block';
+                
+                showAlert('Content generated successfully! Please review and confirm before saving.', 'success');
+                
+            } catch (error) {
+                console.error('Error generating content:', error);
+                showAlert('Failed to generate content. Please try again.', 'danger');
+            } finally {
+                // Restore button state
+                generateBtn.innerHTML = originalText;
+                generateBtn.disabled = false;
+            }
+        }
+
+        function clearActivityContent() {
+            document.getElementById('activityInstructions').value = '';
+            document.getElementById('saveActivityBtn').style.display = 'inline-block';
+            document.getElementById('confirmSaveActivityBtn').style.display = 'none';
+        }
+
+        async function confirmAndSaveActivity() {
+            // This is the same as addActivity but with confirmation
+            await addActivity();
+        }
+
+        // Content Viewer Functions
+        async function viewActivityContent(id) {
+            try {
+                const activity = await apiCall(`/api/Activities/${id}`);
+                
+                // Display activity information in the modal
+                document.getElementById('activityTitleDisplay').textContent = activity.title;
+                document.getElementById('activityDurationDisplay').textContent = activity.duration;
+                
+                const typeBadge = document.getElementById('activityTypeDisplay');
+                typeBadge.textContent = activity.type;
+                typeBadge.className = `badge ${activity.type === 'TP' ? 'badge-tp' : 'badge-td'}`;
+                
+                // Format and display the content
+                const contentDiv = document.getElementById('activityContentDisplay');
+                contentDiv.innerHTML = formatActivityContent(activity.instructions);
+                
+                // Show the modal
+                new bootstrap.Modal(document.getElementById('viewActivityModal')).show();
+                
+            } catch (error) {
+                showAlert('Failed to load activity details', 'danger');
+            }
+        }
+
+        function formatActivityContent(content) {
+            if (!content) return '<p class="text-muted">No instructions available for this activity.</p>';
+            
+            // Convert plain text to HTML with basic formatting
+            let formattedContent = content
+                .replace(/\n\n/g, '</p><p>')
+                .replace(/\n/g, '<br>')
+                .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                .replace(/\*(.*?)\*/g, '<em>$1</em>')
+                .replace(/^# (.*$)/gm, '<h1>$1</h1>')
+                .replace(/^## (.*$)/gm, '<h2>$1</h2>')
+                .replace(/^### (.*$)/gm, '<h3>$1</h3>')
+                .replace(/^- (.*$)/gm, '<li>$1</li>')
+                .replace(/^\d+\. (.*$)/gm, '<li>$1</li>');
+            
+            // Wrap in paragraphs
+            if (!formattedContent.startsWith('<')) {
+                formattedContent = '<p>' + formattedContent + '</p>';
+            }
+            
+            return formattedContent;
+        }
+
+        function downloadActivityAsPDF() {
+            const title = document.getElementById('activityTitleDisplay').textContent;
+            const content = document.getElementById('activityContentDisplay').innerHTML;
+            const duration = document.getElementById('activityDurationDisplay').textContent;
+            const type = document.getElementById('activityTypeDisplay').textContent;
+            
+            // Create a new window for PDF generation
+            const printWindow = window.open('', '_blank');
+            printWindow.document.write(`
+                <!DOCTYPE html>
+                <html>
+                <head>
+                    <title>${title}</title>
+                    <style>
+                        body {
+                            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+                            line-height: 1.6;
+                            color: #333;
+                            max-width: 800px;
+                            margin: 0 auto;
+                            padding: 20px;
+                        }
+                        .header {
+                            text-align: center;
+                            border-bottom: 3px solid #e74c3c;
+                            padding-bottom: 20px;
+                            margin-bottom: 30px;
+                        }
+                        .header h1 {
+                            color: #2c3e50;
+                            margin: 0;
+                            font-size: 2.5rem;
+                        }
+                        .header .meta {
+                            color: #7f8c8d;
+                            margin-top: 10px;
+                        }
+                        .content {
+                            font-size: 14pt;
+                            line-height: 1.8;
+                        }
+                        .content h1, .content h2, .content h3 {
+                            color: #2c3e50;
+                            margin-top: 2rem;
+                            margin-bottom: 1rem;
+                        }
+                        .content h1 {
+                            font-size: 1.8rem;
+                            border-bottom: 2px solid #e74c3c;
+                            padding-bottom: 0.5rem;
+                        }
+                        .content h2 {
+                            font-size: 1.4rem;
+                        }
+                        .content h3 {
+                            font-size: 1.2rem;
+                        }
+                        .content p {
+                            margin-bottom: 1rem;
+                            text-align: justify;
+                        }
+                        .content ul, .content ol {
+                            margin-bottom: 1rem;
+                            padding-left: 2rem;
+                        }
+                        .content li {
+                            margin-bottom: 0.5rem;
+                        }
+                        .content strong {
+                            color: #2c3e50;
+                            font-weight: 600;
+                        }
+                        .content em {
+                            color: #7f8c8d;
+                        }
+                        .footer {
+                            margin-top: 50px;
+                            text-align: center;
+                            color: #7f8c8d;
+                            font-size: 12pt;
+                            border-top: 1px solid #ecf0f1;
+                            padding-top: 20px;
+                        }
+                        @@media print {
+                            body { margin: 0; padding: 15px; }
+                            .header { page-break-after: avoid; }
+                            .content h1, .content h2, .content h3 { page-break-after: avoid; }
+                        }
+                    </style>
+                </head>
+                <body>
+                    <div class="header">
+                        <h1>${title}</h1>
+                        <div class="meta">Type: ${type} | Duration: ${duration} minutes</div>
+                    </div>
+                    <div class="content">
+                        ${content}
+                    </div>
+                    <div class="footer">
+                        <p>Generated on ${new Date().toLocaleDateString()} at ${new Date().toLocaleTimeString()}</p>
+                    </div>
+                </body>
+                </html>
+            `);
+            
+            printWindow.document.close();
+            
+            // Wait for content to load, then trigger print dialog
+            setTimeout(() => {
+                printWindow.print();
+            }, 500);
+        }
+
+        function printActivityContent() {
+            downloadActivityAsPDF();
+        }
+    </script>
+}

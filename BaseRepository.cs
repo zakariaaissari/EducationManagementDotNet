@@ -41,7 +41,8 @@ namespace isgasoir
 
         public T update(T entity)
         {
-            throw new NotImplementedException();
+            _entities.Update(entity);
+            return entity;
         }
 
        public  IQueryable<T> Query => _entities;

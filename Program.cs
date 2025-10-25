@@ -20,6 +20,7 @@ builder.Services.AddHttpClient<LLMApi>();
 builder.Services.AddSingleton<LLMApi>();
 
 builder.Services.AddControllers();
+builder.Services.AddRazorPages();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
@@ -35,8 +36,9 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-app.UseAuthorization();
+// app.UseAuthorization(); // Commented out for testing
 
 app.MapControllers();
+app.MapRazorPages();
 
 app.Run();

@@ -28,7 +28,7 @@ namespace isgasoir.Controllers
           {
                 return null;// NotFound();
           }
-            return  _unitOfWork.moduleRepository.findAll();
+            return _unitOfWork.moduleRepository.Query.Include(m => m.Sem).ToList();
         }
 
         // GET: api/Modules/5
@@ -86,9 +86,57 @@ namespace isgasoir.Controllers
             return CreatedAtAction("GetModule", new { id = @module.Id }, @module);
         }
 
-       /* private bool ModuleExists(long id)
+        // PUT: api/Modules/5
+        [HttpPut("{id}")]
+        public ActionResult<Module> PutModule(long id, Module module)
         {
-            return (_context.modules?.Any(e => e.Id == id)).GetValueOrDefault();
-        }*/
+            if (id != module.Id)
+            {
+                return BadRequest();
+            }
+
+            try
+            {
+                _unitOfWork.moduleRepository.update(module);
+                _unitOfWork.complete();
+                return Ok(module);
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!ModuleExists(id))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+        }
+
+        // DELETE: api/Modules/5
+        [HttpDelete("{id}")]
+        public IActionResult DeleteModule(long id)
+        {
+            if (_unitOfWork.moduleRepository == null)
+            {
+                return NotFound();
+            }
+            var module = _unitOfWork.moduleRepository.findById(id);
+            if (module == null)
+            {
+                return NotFound();
+            }
+
+            _unitOfWork.moduleRepository.remove(module);
+            _unitOfWork.complete();
+
+            return NoContent();
+        }
+
+        private bool ModuleExists(long id)
+        {
+            return (_unitOfWork.moduleRepository.Query?.Any(e => e.Id == id)).GetValueOrDefault();
+        }
     }
 }
